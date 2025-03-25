@@ -1,5 +1,5 @@
 ﻿using Ecommerce.Application.Abstractions.Infrastructure;
-using Ecommerce.Application.Logic.Services;
+using Ecommerce.Application.Services;
 
 namespace Ecommerce.API.Extensions
 {

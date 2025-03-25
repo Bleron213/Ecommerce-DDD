@@ -16,14 +16,14 @@ namespace Ecommerce.Infrastructure
             //NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 
             services.AddScoped<AuditableEntityInterceptor>();
-            //services.AddScoped<DispatchDomainEventsInterceptor>();
+            services.AddScoped<DispatchDomainEventsInterceptor>();
             services.AddScoped<AuditTrailInterceptor>();
 
             services.AddDbContext<IEcommerceDbContext, EcommerceDbContext>((sp, options) =>
             {
                 options.AddInterceptors
                 (
-                    //sp.GetService<DispatchDomainEventsInterceptor>()!,
+                    sp.GetService<DispatchDomainEventsInterceptor>()!,
                     sp.GetService<AuditableEntityInterceptor>()!,
                     sp.GetService<AuditTrailInterceptor>()!
                 );

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Application.Logic.Services
+namespace Ecommerce.Application.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
-        public string UserId => "TestUser";
+        public string UserId => Guid.NewGuid().ToString();
     }
 }

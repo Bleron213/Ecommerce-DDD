@@ -1,5 +1,6 @@
 
 using Ecommerce.API.Extensions;
+using Ecommerce.Application;
 using Ecommerce.Infrastructure;
 using Scalar.AspNetCore;
 
@@ -12,6 +13,7 @@ try
     builder.Services.AddControllers();
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
+    builder.Services.RegisterMediator();
     builder.Services.RegisterAPIServices();
     builder.Services.RegisterDatabase(builder.Configuration);
 

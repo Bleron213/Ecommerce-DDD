@@ -12,7 +12,6 @@ namespace Ecommerce.Domain.Entities
 
         public decimal TotalPrice { get; set; }
         public DateTimeOffset OrderDate { get; set; }
-
         public Guid CustomerId { get; set; }
 
         #region Navigations
