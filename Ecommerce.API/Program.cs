@@ -2,20 +2,34 @@
 using Ecommerce.API.Extensions;
 using Ecommerce.Application;
 using Ecommerce.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
-
     builder.Services.AddControllers();
-    // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
     builder.Services.RegisterMediator();
     builder.Services.RegisterAPIServices();
     builder.Services.RegisterDatabase(builder.Configuration);
+
+    builder.Services
+    .AddApiVersioning(options =>
+    {
+        options.AssumeDefaultVersionWhenUnspecified = true;
+    })
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true;
+    });
+
+    builder.Services.Configure<ApiBehaviorOptions>(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
 
     var app = builder.Build();
 
@@ -23,7 +37,10 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
-        app.MapScalarApiReference();
+        app.MapScalarApiReference(options =>
+        {
+            options.Title = "Ecommerce API";
+        });
     }
 
     app.UseHttpsRedirection();

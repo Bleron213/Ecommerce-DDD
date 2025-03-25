@@ -1,4 +1,5 @@
-﻿using Ecommerce.API.Contracts.Response.Order;
+﻿using Ecommerce.API.Contracts.Request.Order;
+using Ecommerce.API.Contracts.Response.Order;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,13 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 {
     public class EditOrderCommand : IRequest<OrderByIdResponse>
     {
-        public EditOrderCommand()
+        public EditOrderCommand(EditOrderRequest request)
         {
+            ArgumentNullException.ThrowIfNull(request);
+            Request = request;
         }
+
+        public EditOrderRequest Request { get; }
 
         public class EditOrderCommandHandler : IRequestHandler<EditOrderCommand, OrderByIdResponse>
         {

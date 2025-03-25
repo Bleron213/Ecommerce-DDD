@@ -8,6 +8,6 @@ namespace Ecommerce.API.Contracts.Request.Order
 {
     public class EditOrderRequest
     {
-        public List<CreateOrderRequest> OrderItems = new List<CreateOrderRequest>();
+        public required List<OrderItemRequest> OrderItems { get; set; } = [];
     }
 }

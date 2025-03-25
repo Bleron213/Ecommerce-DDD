@@ -12,7 +12,7 @@ namespace Ecommerce.API.Contracts.Response.Order
         public required decimal TotalPrice { get; set; }
         public required DateTimeOffset OrderDate { get; set; }
         public required Customer Customer { get; set; }
-        public required List<OrderItem> OrderItems = new List<OrderItem>();
+        public required List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 
     public class Customer
