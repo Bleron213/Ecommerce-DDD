@@ -9,6 +9,6 @@ namespace Ecommerce.Application.Services
 {
     public class CurrentUserService : ICurrentUserService
     {
-        public string UserId => Guid.NewGuid().ToString();
+        public string UserId => "564660d1-7970-4895-91a3-b81bb95a8d03";
     }
 }

@@ -1,6 +1,8 @@
 
+using Ecommerce.API;
 using Ecommerce.API.Extensions;
 using Ecommerce.Application;
+using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
@@ -48,6 +50,12 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+
+    using var scope = app.Services.CreateScope();
+
+    Seeder seeder = new Seeder(scope.ServiceProvider.GetRequiredService<IEcommerceDbContext>(), scope.ServiceProvider.GetRequiredService<ICurrentUserService>());
+    seeder.Seed();
 
     app.Run();
 
