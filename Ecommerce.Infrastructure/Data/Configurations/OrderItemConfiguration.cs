@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using Ecommerce.Domain.Entities.Shared.ValueObjects;
 
 namespace Ecommerce.Infrastructure.Data.Configurations
 {
@@ -23,6 +25,20 @@ namespace Ecommerce.Infrastructure.Data.Configurations
             builder.HasOne(x => x.Product)
                 .WithMany()
                 .HasForeignKey(x => x.ProductId);
+
+            builder.Property(x => x.Price).HasConversion(
+                v => JsonSerializer.Serialize(v, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                }),
+                v => JsonSerializer.Deserialize<Price>(v, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+                })!
+            )
+            .HasColumnType("jsonb");
         }
     }
 }

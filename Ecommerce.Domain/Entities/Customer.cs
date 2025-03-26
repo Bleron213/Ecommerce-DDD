@@ -13,6 +13,11 @@ namespace Ecommerce.Domain.Entities
 {
     public class Customer : BaseEntity
     {
+
+        private Customer()
+        {
+        }
+
         public Customer(string firstName, string lastName, Address address)
         {
             ArgumentException.ThrowIfNullOrEmpty(firstName);

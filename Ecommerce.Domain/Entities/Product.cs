@@ -11,6 +11,10 @@ namespace Ecommerce.Domain.Entities
 {
     public class Product : BaseEntity
     {
+        private Product()
+        {
+        }
+
         public Product(string name, Price price)
         {
             ArgumentNullException.ThrowIfNullOrEmpty(name);

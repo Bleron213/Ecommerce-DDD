@@ -15,22 +15,19 @@ namespace Ecommerce.Domain.Entities
         [TrackProperty]
         public int Quantity { get; private set; }
         [TrackProperty]
-        public Price Price { get; set; }
+        public Price Price { get; private set; }
 
         public OrderItem(Product product, int quantity)
         {
             Id = Guid.NewGuid();
             Product = product ?? throw new ArgumentNullException(nameof(product));
             Quantity = quantity > 0 ? quantity : throw new ArgumentException("Quantity must be greater than 0.");
-
             ProductId = product.Id;
+            SetOrderItemCurrentPrice();
         }
 
-        public OrderItem(Guid productId, int quantity)
+        private OrderItem()
         {
-            Id = Guid.NewGuid();
-            ProductId = productId;
-            Quantity = quantity > 0 ? quantity : throw new ArgumentException("Quantity must be greater than 0.");
         }
 
         public void SetQuantity(int quantity)

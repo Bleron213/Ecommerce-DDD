@@ -13,6 +13,9 @@ using Serilog.Exceptions.Core;
 using Serilog.Exceptions.Destructurers;
 using Serilog.Exceptions.EntityFrameworkCore.Destructurers;
 using Serilog.Exceptions;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 
 Log.Logger = new LoggerConfiguration()
@@ -37,7 +40,12 @@ try
         .Enrich.With<ActivityEnricher>()
         .ReadFrom.Configuration(ctx.Configuration));
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(opt =>
+        {
+            opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+    
     builder.Services.AddOpenApi();
     builder.Services.RegisterMediator();
     builder.Services.RegisterAPIServices();

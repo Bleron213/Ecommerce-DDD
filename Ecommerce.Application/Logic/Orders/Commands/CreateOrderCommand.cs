@@ -4,6 +4,7 @@ using Ecommerce.API.Contracts.Request.Order;
 using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;

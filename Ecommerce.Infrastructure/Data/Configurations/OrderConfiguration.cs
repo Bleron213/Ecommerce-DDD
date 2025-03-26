@@ -18,6 +18,12 @@ namespace Ecommerce.Infrastructure.Data.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedNever();
 
+            builder.Property(x => x.Status)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v) 
+                );
+
             builder.HasOne(x => x.Customer)
                 .WithMany(x => x.Orders)
                 .HasForeignKey(x => x.CustomerId);

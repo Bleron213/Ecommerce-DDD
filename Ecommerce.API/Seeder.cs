@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities;
-using Ecommerce.Domain.Entities.ValueObjects;
+using Ecommerce.Domain.Entities.Orders;
+using Ecommerce.Domain.Entities.Shared.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.API
