@@ -48,6 +48,26 @@ $ git clone https://github.com/Bleron213/Ecomerce-DDD
 
 1. In the solution root, you can find a postman collection. Open it in Postman and you can send test requests. Make sure to adjust ports as needed.
 2. Open View -> Test Explorer -> Right click on Ecommerce.Tests and Run. Everything should pass.
+
+## Design Decisions & Assumptions
+
+### Repository Pattern
+
+The Repository pattern has been implemented in this solution for PoC reasons, but I don't think it is necessary or recommended. Repository pattern and Specification pattern are abstractions that provide no real benefit other than bringing in another abstraction. EF Core is already a Repository pattern with Unit Of Work, so introducing another Repository pattern is unnecessary and redundant. It would make sense if the ORM was Dapper or ADO.NET, but EF Core is already a very stable software and abstracting it away makes it less powerful.
+
+In Production, I would argue that just using DbContext directly provides more value rather than creating another abstraction.
+
+### Unit Testing Approach
+
+**Unit Tests** are strictly implemented in the Entity Level layer. No mocking has been implemented and I don't recommend any mocking, ever. Mocking provides zero tangible value. Unit tests here test the business logic strictly, and if a refactor happens in the future or the current business logic is extended, we can be sure that our previous logic remains as is. There is real value from these tests because 
+
+1. They are blazing fast.
+2. They can run in the CI/CD pipeline and provide fast feedback if something breaks.
+
+### Code-First vs Database-First
+
+Initially, I wanted to add a Database-First approach, but for PoC reasons I decided to go with a Code-First application. In Production-grade applications, however, I recommend going Database-First.
+
   
 ## Credits
 
