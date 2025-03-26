@@ -48,7 +48,7 @@ public class AuditTrailInterceptor : SaveChangesInterceptor
                 AuditId = Guid.NewGuid(),
                 AffectedEntity = entry.Entity.GetType().Name,
                 AuditDate = DateTimeOffset.UtcNow,
-                CreatedBy = _user.UserId.ToString(),
+                CreatedBy = _user.UserGuid.ToString(),
             };
 
             Dictionary<string, object> oldValues = new();

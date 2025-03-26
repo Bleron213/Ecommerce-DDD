@@ -21,14 +21,14 @@ namespace Ecommerce.API.Contracts.Mapping
                     FirstName = order.Customer.FirstName,
                     LastName = order.Customer.LastName
                 },
-                TotalPrice = order.OrderItems.Sum(x => x.Quantity * x.Product.Price),
+                TotalPrice = order.OrderItems.Sum(x => x.GetTotalPrice()),
                 OrderDate = order.OrderDate,
                 OrderItems = order.OrderItems.Select(y => new Response.Order.OrderItem
                 {
                     ProductId = y.Product.Id,
                     ProductName = y.Product.Name,
                     Quantity = y.Quantity,
-                    Price = y.Product.Price
+                    Price = new Price(y.Product.Price.Amount)
                 }).ToList()
             };
         }
@@ -38,7 +38,7 @@ namespace Ecommerce.API.Contracts.Mapping
             return new OrderResponse
             {
                 Id = order.Id,
-                TotalPrice = order.OrderItems.Sum(x => x.Quantity * x.Product.Price),
+                TotalPrice = order.OrderItems.Sum(x => x.GetTotalPrice()),
                 OrderDate = order.OrderDate,
             };
         }

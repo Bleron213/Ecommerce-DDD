@@ -42,8 +42,10 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 
             public async Task<OrderByIdResponse> Handle(EditOrderCommand request, CancellationToken cancellationToken)
             {
-                if (!Guid.TryParse(_currentUserService.UserId, out var userGuid))
-                    throw new AppException(new API.Common.Errors.CustomError(System.Net.HttpStatusCode.Forbidden, "not_allowed", "user not allowed"));
+                var products = (await _ecommerceDbContext.Products
+                .Where(x => request.Request.OrderItems.Select(x => x.ProductId).Contains(x.Id))
+                .ToListAsync())
+                .Select(product => (product, request.Request.OrderItems.Where(y => y.ProductId == product.Id).Select(x => x.Quantity).First()));
 
                 var order = await _ecommerceDbContext.Orders
                         .Include(x => x.OrderItems)
@@ -51,17 +53,8 @@ namespace Ecommerce.Application.Logic.Orders.Commands
                         .Include(x => x.Customer)
                         .FirstOrDefaultAsync(x => x.Id == request.OrderId && !x.Deleted) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
 
-                order.OrderItems.Clear();
-
-                foreach (var orderItem in request.Request.OrderItems)
-                {
-                    order.OrderItems.Add(new Domain.Entities.OrderItem
-                    {
-                        Id = Guid.NewGuid(),
-                        ProductId = orderItem.ProductId,
-                        Quantity = orderItem.Quantity
-                    });
-                }
+                order.ClearOrderItems();
+                order.AddOrderItems(products);
 
                 await _ecommerceDbContext.SaveChangesAsync();
 

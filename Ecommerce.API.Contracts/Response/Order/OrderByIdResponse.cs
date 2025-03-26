@@ -27,6 +27,30 @@ namespace Ecommerce.API.Contracts.Response.Order
         public required Guid ProductId { get; set; }
         public required string ProductName { get; set; }
         public required int Quantity { get; set; }
-        public required decimal Price { get; set; }
+        public required Price Price { get; set; }
+    }
+
+    public class Price
+    {
+        public decimal Amount { get; }
+
+        public Price(decimal amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Price must be greater than zero.", nameof(amount));
+
+            Amount = amount;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Price price &&
+                   Amount == price.Amount;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Amount);
+        }
     }
 }

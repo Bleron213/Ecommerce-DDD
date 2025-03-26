@@ -40,25 +40,14 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 
             public async Task<OrderByIdResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
             {
-                if (!Guid.TryParse(_currentUserService.UserId, out var userGuid))
-                    throw new AppException(new API.Common.Errors.CustomError(System.Net.HttpStatusCode.Forbidden, "not_allowed", "user not allowed"));
+                var products = (await _ecommerceDbContext.Products
+                    .Where(x => request.Request.OrderItems.Select(x => x.ProductId).Contains(x.Id))
+                    .ToListAsync())
+                    .Select(product => (product, request.Request.OrderItems.Where(y => y.ProductId == product.Id).Select(x => x.Quantity).First()));
 
-                var order = new Order
-                {
-                    Id = Guid.NewGuid(),
-                    OrderDate = DateTimeOffset.UtcNow,
-                    CustomerId = Guid.Parse(_currentUserService.UserId)
-                };
+                var order = new Order(DateTimeOffset.UtcNow, _currentUserService.UserGuid);
 
-                foreach (var orderItem in request.Request.OrderItems)
-                {
-                    order.OrderItems.Add(new Domain.Entities.OrderItem
-                    {
-                        Id = Guid.NewGuid(),
-                        ProductId = orderItem.ProductId,
-                        Quantity = orderItem.Quantity
-                    });
-                }
+                order.AddOrderItems(products);
 
                 await _ecommerceDbContext.Orders.AddAsync(order);
 

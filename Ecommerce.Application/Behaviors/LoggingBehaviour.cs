@@ -18,7 +18,7 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where T
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        var userId = _user.UserId ?? string.Empty;
+        var userId = _user.UserGuid.ToString() ?? string.Empty;
 
         _logger.LogInformation("Admin.API MediatR Request: {Name} {@UserId} {@Request}",
             requestName, userId, request);

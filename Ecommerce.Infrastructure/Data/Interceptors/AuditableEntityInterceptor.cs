@@ -34,7 +34,7 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
 
-        var userId = _user.UserId;
+        var userId = _user.UserGuid.ToString();
         var currentTime = DateTimeOffset.UtcNow;
 
         foreach (var entry in context.ChangeTracker.Entries<BaseEntity>())

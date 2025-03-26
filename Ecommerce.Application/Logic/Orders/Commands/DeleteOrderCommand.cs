@@ -43,7 +43,7 @@ namespace Ecommerce.Application.Logic.Orders.Commands
                         .Include(x => x.Customer)
                         .FirstOrDefaultAsync(x => x.Id == request.OrderId && !x.Deleted) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
 
-                order.Deleted = true;
+                order.MarkAsDeleted();
 
                 await _ecommerceDbContext.SaveChangesAsync();
 

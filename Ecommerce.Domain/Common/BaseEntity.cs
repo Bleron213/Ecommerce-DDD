@@ -10,7 +10,7 @@ namespace Ecommerce.Domain.Common
 {
     public abstract class BaseEntity
     {
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         [MaxLength(50)]
         public string? CreatedBy { get; set; }
