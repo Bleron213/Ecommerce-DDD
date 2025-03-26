@@ -48,3 +48,4 @@ namespace Ecommerce.Infrastructure.Data.Configurations
     }
 
 }
+  
