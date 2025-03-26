@@ -37,7 +37,7 @@ namespace Ecommerce.API.Controllers.V1
             return Ok(result);
         }
 
-        [HttpPost("edit")]
+        [HttpPost("edit/{orderId}")]
         [ProducesResponseType(typeof(OrderByIdResponse), 200)]
         [ProducesResponseType(typeof(ProblemDetails), 404)]
         [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -54,7 +54,7 @@ namespace Ecommerce.API.Controllers.V1
             return Ok(result);
         }
 
-        [HttpPost("delete")]
+        [HttpPost("delete/{orderId}")]
         [ProducesResponseType(typeof(OrderByIdResponse), 200)]
         [ProducesResponseType(typeof(ProblemDetails), 404)]
         [ProducesResponseType(typeof(ProblemDetails), 400)]

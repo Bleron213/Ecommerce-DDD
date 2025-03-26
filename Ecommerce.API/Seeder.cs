@@ -16,12 +16,13 @@ namespace Ecommerce.API
 
         public async void Seed()
         {
+            _ecommerceDbContext.Database.EnsureDeleted();
             _ecommerceDbContext.Database.EnsureCreated();
 
-            _ecommerceDbContext.OrderItems.ExecuteDelete();
-            _ecommerceDbContext.Orders.ExecuteDelete();
-            _ecommerceDbContext.Products.ExecuteDelete();
-            _ecommerceDbContext.Customers.ExecuteDelete();
+            //_ecommerceDbContext.OrderItems.ExecuteDelete();
+            //_ecommerceDbContext.Orders.ExecuteDelete();
+            //_ecommerceDbContext.Products.ExecuteDelete();
+            //_ecommerceDbContext.Customers.ExecuteDelete();
 
 
             // ---------- Simulate Customer --------------------------------- //

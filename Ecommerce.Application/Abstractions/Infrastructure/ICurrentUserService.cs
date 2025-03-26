@@ -8,7 +8,8 @@ namespace Ecommerce.Application.Abstractions.Infrastructure
 {
     public interface ICurrentUserService
     {
-        public Guid UserId { get; }
+        public string UserId { get; }
+        public Guid? UserGuid { get; }
         public string FirstName { get; }
         public string LastName { get; }
     }

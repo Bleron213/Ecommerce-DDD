@@ -1,4 +1,5 @@
 
+using Admin.API.Handlers;
 using Ecommerce.API;
 using Ecommerce.API.Extensions;
 using Ecommerce.Application;
@@ -16,6 +17,9 @@ try
     builder.Services.RegisterMediator();
     builder.Services.RegisterAPIServices();
     builder.Services.RegisterDatabase(builder.Configuration);
+
+    builder.Services.AddProblemDetails();
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
     builder.Services
     .AddApiVersioning(options =>
@@ -35,6 +39,8 @@ try
 
     var app = builder.Build();
 
+    app.UseExceptionHandler();
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -44,6 +50,7 @@ try
             options.Title = "Ecommerce API";
         });
     }
+
 
     app.UseHttpsRedirection();
 

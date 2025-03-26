@@ -38,7 +38,7 @@ namespace Ecommerce.Application.Logic.Orders.Query
                         .Include(x => x.OrderItems)
                             .ThenInclude(x => x.Product)
                         .Include(x => x.Customer)
-                        .Where(x => x.CustomerId == _currentUserService.UserId && !x.Deleted)
+                        .Where(x => x.CustomerId == _currentUserService.UserGuid && !x.Deleted)
                         .ToListAsync();
 
 
