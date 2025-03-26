@@ -39,7 +39,7 @@ namespace Ecommerce.API.Contracts.Mapping
             {
                 Id = order.Id,
                 TotalPrice = order.OrderItems.Sum(x => x.Quantity * x.Product.Price),
-                OrderDate = order.OrderDate
+                OrderDate = order.OrderDate,
             };
         }
     }

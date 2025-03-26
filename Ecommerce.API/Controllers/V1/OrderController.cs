@@ -1,4 +1,5 @@
-﻿using Ecommerce.API.Contracts.Request.Order;
+﻿using Ecommerce.API.Common.Base;
+using Ecommerce.API.Contracts.Request.Order;
 using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Logic.Orders.Commands;
 using Ecommerce.Application.Logic.Orders.Query;
@@ -72,16 +73,16 @@ namespace Ecommerce.API.Controllers.V1
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<OrderResponse>), 200)]
+        [ProducesResponseType(typeof(PagedResponse<List<OrderResponse>>), 200)]
         [ProducesResponseType(typeof(ProblemDetails), 404)]
         [ProducesResponseType(typeof(ProblemDetails), 400)]
         [ProducesResponseType(typeof(ProblemDetails), 500)]
         [Description("Retrieves orders")]
-        public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> GetOrders([FromQuery] PaginationFilterRequest request)
         {
             _logger.LogDebug("Entering method {method}", nameof(GetOrders));
 
-            var result = await _mediator.Send(new GetOrdersQuery());
+            var result = await _mediator.Send(new GetOrdersQuery(request));
 
             _logger.LogDebug("Entering method {method}", nameof(GetOrders));
 
