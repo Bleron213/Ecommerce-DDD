@@ -43,14 +43,14 @@ namespace Ecommerce.Domain.Entities
         }
 
         #region Product
-        public Guid ProductId { get; set; }
-        public Product Product { get; set; }
+        public Guid ProductId { get; private set; }
+        public Product Product { get; private set; }
 
         #endregion
 
         #region Order
-        public Guid OrderId { get; set; }
-        public Order Order { get; set; }
+        public Guid OrderId { get; private set; }
+        public Order Order { get; private set; }
 
         #endregion
     }
