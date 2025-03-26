@@ -1,5 +1,5 @@
 ﻿using Ecommerce.API.Contracts.Response.Order;
-using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,7 @@ namespace Ecommerce.API.Contracts.Mapping
                 },
                 TotalPrice = order.OrderItems.Sum(x => x.GetTotalPrice()),
                 OrderDate = order.OrderDate,
+                OrderStatus = (Response.Order.OrderStatus)order.Status,
                 OrderItems = order.OrderItems.Select(y => new Response.Order.OrderItem
                 {
                     ProductId = y.Product.Id,
@@ -40,6 +41,7 @@ namespace Ecommerce.API.Contracts.Mapping
                 Id = order.Id,
                 TotalPrice = order.OrderItems.Sum(x => x.GetTotalPrice()),
                 OrderDate = order.OrderDate,
+                OrderStatus = (Response.Order.OrderStatus)order.Status
             };
         }
     }

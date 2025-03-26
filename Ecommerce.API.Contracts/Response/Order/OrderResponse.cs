@@ -8,8 +8,20 @@ namespace Ecommerce.API.Contracts.Response.Order
 {
     public class OrderResponse
     {
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
         public required decimal TotalPrice { get; set; }
-        public DateTimeOffset OrderDate { get; set; }
+        public required DateTimeOffset OrderDate { get; set; }
+        public required OrderStatus OrderStatus { get; set; }
+
+    }
+
+    public enum OrderStatus 
+    {
+        PENDING,
+        PROCESSING,
+        SHIPPED,
+        DELIVERED,
+        CANCELLED,
+        REFUNDED
     }
 }

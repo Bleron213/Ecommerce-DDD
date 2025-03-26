@@ -1,6 +1,6 @@
 ﻿using Ecommerce.API.Common.Exceptions;
 using Ecommerce.Application.Abstractions.Infrastructure;
-using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -41,9 +41,9 @@ namespace Ecommerce.Application.Logic.Orders.Commands
                         .Include(x => x.OrderItems)
                             .ThenInclude(x => x.Product)
                         .Include(x => x.Customer)
-                        .FirstOrDefaultAsync(x => x.Id == request.OrderId && !x.Deleted) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
+                        .FirstOrDefaultAsync(x => x.Id == request.OrderId) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
 
-                order.MarkAsDeleted();
+                order.CancelOrder();
 
                 await _ecommerceDbContext.SaveChangesAsync();
 

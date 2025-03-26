@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Domain.Common;
-using Ecommerce.Domain.Entities.ValueObjects;
+using Ecommerce.Domain.Entities.Shared.Attributes;
+using Ecommerce.Domain.Entities.Shared.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,9 @@ namespace Ecommerce.Domain.Entities
             Price = price;
         }
 
+        [TrackProperty]
         public string Name { get; private set; }
+        [TrackProperty]
         public Price Price { get; private set; }
-
-
-        
     }
-
-
 }

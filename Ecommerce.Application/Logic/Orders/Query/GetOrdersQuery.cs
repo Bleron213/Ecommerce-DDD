@@ -4,6 +4,7 @@ using Ecommerce.API.Contracts.Mapping;
 using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -46,36 +47,28 @@ namespace Ecommerce.Application.Logic.Orders.Query
                     .Include(x => x.OrderItems)
                         .ThenInclude(x => x.Product)
                     .Include(x => x.Customer)
-                    .Where(x => x.CustomerId == _currentUserService.UserGuid && !x.Deleted);
+                    .Where(x => x.CustomerId == _currentUserService.UserGuid);
 
-                if (!string.IsNullOrEmpty(request.Request.OrderByField))
-                {
-                    switch (request.Request.OrderByField.ToLower())
-                    {
-                        case "orderdate":
-                            {
-                                if(request.Request.OrderBy == SortBy.Ascending)
-                                {
-                                    ordersEnumerable = ordersEnumerable.OrderBy(x => x.OrderDate);
-                                } 
-                                else
-                                {
-                                    ordersEnumerable = ordersEnumerable.OrderByDescending(x => x.OrderDate);
-
-                                }
-
-                                break;
-                            }
-                        default: 
-                            break;
-                    }
-
-                }
+                ApplyOrdering(request, ordersEnumerable);
 
                 var count = await ordersEnumerable.CountAsync();
                 var orders = await ordersEnumerable.Skip((request.Request.PageNumber - 1) * request.Request.PageSize).Take(request.Request.PageSize).Select(x => x.ToOrderResponse()).ToListAsync();
 
                 return new PagedResponse<List<OrderResponse>>(orders, orders.Count, request.Request.PageNumber, request.Request.PageSize);
+            }
+
+            public void ApplyOrdering(GetOrdersQuery request, IEnumerable<Order> ordersEnumerable)
+            {
+                if (string.IsNullOrEmpty(request.Request.OrderByField)) return;
+
+                var orderByField = request.Request.OrderByField.ToLower();
+
+                if (orderByField == "orderdate")
+                {
+                    ordersEnumerable = request.Request.OrderBy == SortBy.Ascending
+                        ? ordersEnumerable.OrderBy(x => x.OrderDate)
+                        : ordersEnumerable.OrderByDescending(x => x.OrderDate);
+                }
             }
         }
     }

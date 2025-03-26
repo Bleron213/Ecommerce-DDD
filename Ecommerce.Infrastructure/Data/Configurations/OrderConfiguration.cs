@@ -1,13 +1,13 @@
-﻿using Ecommerce.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ecommerce.Domain.Entities.ValueObjects;
 using System.Text.Json;
+using Ecommerce.Domain.Entities.Shared.ValueObjects;
+using Ecommerce.Domain.Entities.Orders;
 
 namespace Ecommerce.Infrastructure.Data.Configurations
 {

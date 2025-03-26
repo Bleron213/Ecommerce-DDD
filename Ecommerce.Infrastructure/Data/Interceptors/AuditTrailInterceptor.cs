@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Markers;
 using Ecommerce.Domain.Entities;
-using Ecommerce.Domain.Entities.Attributes;
 using Ecommerce.Domain.Extensions;
+using Ecommerce.Domain.Entities.Shared.Attributes;
 
 namespace Ecommerce.Infrastructure.Data.Interceptors;
 public class AuditTrailInterceptor : SaveChangesInterceptor

@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using Ecommerce.Infrastructure.Data.ModelBuilderExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;

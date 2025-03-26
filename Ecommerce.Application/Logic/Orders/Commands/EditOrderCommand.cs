@@ -3,7 +3,7 @@ using Ecommerce.API.Contracts.Mapping;
 using Ecommerce.API.Contracts.Request.Order;
 using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Abstractions.Infrastructure;
-using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -51,10 +51,12 @@ namespace Ecommerce.Application.Logic.Orders.Commands
                         .Include(x => x.OrderItems)
                             .ThenInclude(x => x.Product)
                         .Include(x => x.Customer)
-                        .FirstOrDefaultAsync(x => x.Id == request.OrderId && !x.Deleted) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
+                        .FirstOrDefaultAsync(x => x.Id == request.OrderId) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
 
-                order.ClearOrderItems();
-                order.AddOrderItems(products);
+                if (!order.Editable())
+                    throw new AppException(new API.Common.Errors.CustomError("order_cannot_be_edited", "Order cannot be edited at this state"));
+
+                order.ModifyOrderItems(products);
 
                 await _ecommerceDbContext.SaveChangesAsync();
 

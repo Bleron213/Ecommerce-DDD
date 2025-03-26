@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Domain.Entities.ValueObjects
+namespace Ecommerce.Domain.Entities.Shared.ValueObjects
 {
     public class Price
     {

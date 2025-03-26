@@ -1,4 +1,6 @@
 ﻿using Ecommerce.Domain.Common;
+using Ecommerce.Domain.Entities.Orders;
+using Ecommerce.Domain.Entities.Shared.Attributes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,9 +52,11 @@ namespace Ecommerce.Domain.Entities
                 Orders.Remove(orderToRemove);
         }
 
+        [TrackProperty]
         public string FirstName { get; private set; }
+        [TrackProperty]
         public string LastName { get; private set; }
-
+        [TrackProperty]
         public Address Address { get; private set; }
 
         #region Navigation

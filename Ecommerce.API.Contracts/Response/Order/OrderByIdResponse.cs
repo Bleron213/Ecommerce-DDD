@@ -13,6 +13,7 @@ namespace Ecommerce.API.Contracts.Response.Order
         public required DateTimeOffset OrderDate { get; set; }
         public required Customer Customer { get; set; }
         public required List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public required OrderStatus OrderStatus { get; set; }
     }
 
     public class Customer
