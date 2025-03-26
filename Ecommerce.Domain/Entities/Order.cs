@@ -13,10 +13,12 @@ namespace Ecommerce.Domain.Entities
         public decimal TotalPrice { get; set; }
         public DateTimeOffset OrderDate { get; set; }
         public Guid CustomerId { get; set; }
+        public bool Deleted { get; set; }
 
         #region Navigations
         public Customer Customer { get; set; }
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
         #endregion
 
     }

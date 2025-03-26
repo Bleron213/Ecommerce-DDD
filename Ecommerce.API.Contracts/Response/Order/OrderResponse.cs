@@ -10,5 +10,6 @@ namespace Ecommerce.API.Contracts.Response.Order
     {
         public Guid Id { get; set; }
         public required decimal TotalPrice { get; set; }
+        public DateTimeOffset OrderDate { get; set; }
     }
 }

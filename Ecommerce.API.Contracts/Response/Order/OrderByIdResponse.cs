@@ -8,7 +8,7 @@ namespace Ecommerce.API.Contracts.Response.Order
 {
     public class OrderByIdResponse
     {
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
         public required decimal TotalPrice { get; set; }
         public required DateTimeOffset OrderDate { get; set; }
         public required Customer Customer { get; set; }
@@ -24,7 +24,7 @@ namespace Ecommerce.API.Contracts.Response.Order
 
     public class OrderItem
     {
-        public required string ProductId { get; set; }
+        public required Guid ProductId { get; set; }
         public required string ProductName { get; set; }
         public required int Quantity { get; set; }
         public required decimal Price { get; set; }

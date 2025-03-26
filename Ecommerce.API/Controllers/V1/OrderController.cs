@@ -43,11 +43,11 @@ namespace Ecommerce.API.Controllers.V1
         [ProducesResponseType(typeof(ProblemDetails), 400)]
         [ProducesResponseType(typeof(ProblemDetails), 500)]
         [Description("Edits an existing order")]
-        public async Task<IActionResult> EditOrder(EditOrderRequest request)
+        public async Task<IActionResult> EditOrder(Guid orderId, EditOrderRequest request)
         {
             _logger.LogDebug("Entering method {method}", nameof(EditOrder));
 
-            var result = await _mediator.Send(new EditOrderCommand(request));
+            var result = await _mediator.Send(new EditOrderCommand(orderId, request));
 
             _logger.LogDebug("Entering method {method}", nameof(EditOrder));
 

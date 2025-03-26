@@ -1,4 +1,8 @@
-﻿using MediatR;
+﻿using Ecommerce.API.Common.Exceptions;
+using Ecommerce.Application.Abstractions.Infrastructure;
+using Ecommerce.Domain.Entities;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +23,30 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 
         public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
         {
-            public Task Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
+            private readonly IEcommerceDbContext _ecommerceDbContext;
+            private readonly ICurrentUserService _currentUserService;
+
+            public DeleteOrderCommandHandler(
+                IEcommerceDbContext ecommerceDbContext,
+                ICurrentUserService currentUserService
+                )
             {
-                throw new NotImplementedException();
+                _ecommerceDbContext = ecommerceDbContext;
+                _currentUserService = currentUserService;
+            }
+
+            public async Task Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
+            {
+                var order = await _ecommerceDbContext.Orders
+                        .Include(x => x.OrderItems)
+                            .ThenInclude(x => x.Product)
+                        .Include(x => x.Customer)
+                        .FirstOrDefaultAsync(x => x.Id == request.OrderId && !x.Deleted) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
+
+                order.Deleted = true;
+
+                await _ecommerceDbContext.SaveChangesAsync();
+
             }
         }
     }
