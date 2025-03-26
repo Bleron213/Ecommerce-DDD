@@ -56,6 +56,6 @@ This software uses the following open source software in its source code:
 - [.ASP.NET Core 9](https://github.com/dotnet)
 - [MediatR](https://github.com/jbogard/MediatR)
 - [EF Core](https://github.com/efcore)
-- [NUnit](https://github.com/xunit/xunit)
+- [NUnit](https://github.com/nunit/nunit)
 - [Serilog](https://github.com/serilog/serilog)
 - [Docker](https://github.com/docker)
