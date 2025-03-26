@@ -7,10 +7,35 @@ using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
+using Serilog;
+using Serilog.Enrichers.Span;
+using Serilog.Exceptions.Core;
+using Serilog.Exceptions.Destructurers;
+using Serilog.Exceptions.EntityFrameworkCore.Destructurers;
+using Serilog.Exceptions;
+
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+Log.Information("Starting up");
+Log.Information("Launching: Ecommerce Api");
+
+var builder = WebApplication.CreateBuilder(args);
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .WriteTo.Console()
+        .Enrich.WithExceptionDetails(new DestructuringOptionsBuilder()
+            .WithDefaultDestructurers()
+            .WithDestructurers([new DbUpdateExceptionDestructurer()])
+        )
+        .Enrich.FromLogContext()
+        .Enrich.With<ActivityEnricher>()
+        .ReadFrom.Configuration(ctx.Configuration));
 
     builder.Services.AddControllers();
     builder.Services.AddOpenApi();
@@ -67,13 +92,13 @@ try
     app.Run();
 
 }
-catch (Exception)
+catch (Exception ex)
 {
-
-	throw;
+    Log.Fatal(ex, "Unhandled exception while bootstrapping application");
 }
 finally
 {
-
+    Log.Information("Shutting down...");
+    Log.CloseAndFlush();
 }
 
