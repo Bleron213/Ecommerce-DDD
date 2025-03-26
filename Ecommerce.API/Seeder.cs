@@ -20,7 +20,7 @@ namespace Ecommerce.API
         public async void Seed()
         {
             _ecommerceDbContext.Database.EnsureDeleted();
-            _ecommerceDbContext.Database.EnsureCreated();
+            _ecommerceDbContext.Database.Migrate();
 
             //_ecommerceDbContext.OrderItems.ExecuteDelete();
             //_ecommerceDbContext.Orders.ExecuteDelete();
