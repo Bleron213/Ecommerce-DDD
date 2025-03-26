@@ -50,6 +50,7 @@ try
     builder.Services.RegisterMediator();
     builder.Services.RegisterAPIServices();
     builder.Services.RegisterDatabase(builder.Configuration);
+    builder.Services.RegisterRepositories();
 
     builder.Services.AddProblemDetails();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

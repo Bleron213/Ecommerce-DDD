@@ -1,6 +1,8 @@
 ﻿using Ecommerce.API.Common.Exceptions;
 using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities.Orders;
+using Ecommerce.Domain.Repositories;
+using Ecommerce.Domain.Specifications;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,29 +25,26 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 
         public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
         {
-            private readonly IEcommerceDbContext _ecommerceDbContext;
+            private readonly IUnitOfWork _unitOfWork;
             private readonly ICurrentUserService _currentUserService;
 
             public DeleteOrderCommandHandler(
-                IEcommerceDbContext ecommerceDbContext,
+                IUnitOfWork unitOfWork,
                 ICurrentUserService currentUserService
                 )
             {
-                _ecommerceDbContext = ecommerceDbContext;
+                _unitOfWork = unitOfWork;
                 _currentUserService = currentUserService;
             }
 
+
             public async Task Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
             {
-                var order = await _ecommerceDbContext.Orders
-                        .Include(x => x.OrderItems)
-                            .ThenInclude(x => x.Product)
-                        .Include(x => x.Customer)
-                        .FirstOrDefaultAsync(x => x.Id == request.OrderId) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
+                var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(new OrderSpecification(request.OrderId)) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
 
                 order.CancelOrder();
 
-                await _ecommerceDbContext.SaveChangesAsync();
+                await _unitOfWork.Complete();
 
             }
         }

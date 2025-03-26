@@ -5,6 +5,8 @@ using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Entities.Orders;
+using Ecommerce.Domain.Repositories;
+using Ecommerce.Domain.Specifications;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,45 +32,28 @@ namespace Ecommerce.Application.Logic.Orders.Query
         {
             private readonly IEcommerceDbContext _ecommerceDbContext;
             private readonly ICurrentUserService _currentUserService;
+            private readonly IUnitOfWork _unitOfWork;
 
             public GetOrdersQueryHandler(
                 IEcommerceDbContext ecommerceDbContext,
-                ICurrentUserService currentUserService
+                ICurrentUserService currentUserService,
+                IUnitOfWork unitOfWork
                 )
             {
                 _ecommerceDbContext = ecommerceDbContext;
                 _currentUserService = currentUserService;
+                _unitOfWork = unitOfWork;
             }
 
             public async Task<PagedResponse<List<OrderResponse>>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
             {
+                var orders = (await _unitOfWork.Repository<Order>().ListAsync(new OrdersWithItemsAndOrderingSpecification(_currentUserService.UserGuid, request.Request)))
+                    .Select(x => x.ToOrderResponse())
+                    .ToList();
 
-                var ordersEnumerable = _ecommerceDbContext.Orders
-                    .Include(x => x.OrderItems)
-                        .ThenInclude(x => x.Product)
-                    .Include(x => x.Customer)
-                    .Where(x => x.CustomerId == _currentUserService.UserGuid);
-
-                ApplyOrdering(request, ordersEnumerable);
-
-                var count = await ordersEnumerable.CountAsync();
-                var orders = await ordersEnumerable.Skip((request.Request.PageNumber - 1) * request.Request.PageSize).Take(request.Request.PageSize).Select(x => x.ToOrderResponse()).ToListAsync();
+                var count = await _unitOfWork.Repository<Order>().CountAsync(new OrdersByCustomerIdSpecification(_currentUserService.UserGuid));
 
                 return new PagedResponse<List<OrderResponse>>(orders, orders.Count, request.Request.PageNumber, request.Request.PageSize);
-            }
-
-            public void ApplyOrdering(GetOrdersQuery request, IEnumerable<Order> ordersEnumerable)
-            {
-                if (string.IsNullOrEmpty(request.Request.OrderByField)) return;
-
-                var orderByField = request.Request.OrderByField.ToLower();
-
-                if (orderByField == "orderdate")
-                {
-                    ordersEnumerable = request.Request.OrderBy == SortBy.Ascending
-                        ? ordersEnumerable.OrderBy(x => x.OrderDate)
-                        : ordersEnumerable.OrderByDescending(x => x.OrderDate);
-                }
             }
         }
     }

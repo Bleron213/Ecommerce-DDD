@@ -3,7 +3,10 @@ using Ecommerce.API.Contracts.Mapping;
 using Ecommerce.API.Contracts.Request.Order;
 using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Abstractions.Infrastructure;
+using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Entities.Orders;
+using Ecommerce.Domain.Repositories;
+using Ecommerce.Domain.Specifications;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,37 +31,31 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 
         public class EditOrderCommandHandler : IRequestHandler<EditOrderCommand, OrderByIdResponse>
         {
-            private readonly IEcommerceDbContext _ecommerceDbContext;
+            private readonly IUnitOfWork _unitOfWork;
             private readonly ICurrentUserService _currentUserService;
 
             public EditOrderCommandHandler(
-                IEcommerceDbContext ecommerceDbContext,
+                IUnitOfWork unitOfWork,
                 ICurrentUserService currentUserService
                 )
             {
-                _ecommerceDbContext = ecommerceDbContext;
+                _unitOfWork = unitOfWork;
                 _currentUserService = currentUserService;
             }
 
             public async Task<OrderByIdResponse> Handle(EditOrderCommand request, CancellationToken cancellationToken)
             {
-                var products = (await _ecommerceDbContext.Products
-                .Where(x => request.Request.OrderItems.Select(x => x.ProductId).Contains(x.Id))
-                .ToListAsync())
-                .Select(product => (product, request.Request.OrderItems.Where(y => y.ProductId == product.Id).Select(x => x.Quantity).First()));
+                var products = (await _unitOfWork.Repository<Product>().ListAsync(new ProductSpecification(request.Request.OrderItems.Select(x => x.ProductId).ToList())))
+                        .Select(product => (product, request.Request.OrderItems.Where(y => y.ProductId == product.Id).Select(x => x.Quantity).First()));
 
-                var order = await _ecommerceDbContext.Orders
-                        .Include(x => x.OrderItems)
-                            .ThenInclude(x => x.Product)
-                        .Include(x => x.Customer)
-                        .FirstOrDefaultAsync(x => x.Id == request.OrderId) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
+                var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(new OrderSpecification(request.OrderId)) ?? throw new AppException(API.Common.Errors.CoreErrors.GenericErrors.NotFound(nameof(Order)));
 
                 if (!order.Editable())
                     throw new AppException(new API.Common.Errors.CustomError("order_cannot_be_edited", "Order cannot be edited at this state"));
 
                 order.ModifyOrderItems(products);
 
-                await _ecommerceDbContext.SaveChangesAsync();
+                await _unitOfWork.Complete();
 
                 return order.ToOrderByIdResponse();
             }

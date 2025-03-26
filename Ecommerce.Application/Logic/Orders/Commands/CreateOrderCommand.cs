@@ -5,6 +5,8 @@ using Ecommerce.API.Contracts.Response.Order;
 using Ecommerce.Application.Abstractions.Infrastructure;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Entities.Orders;
+using Ecommerce.Domain.Repositories;
+using Ecommerce.Domain.Specifications;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,40 +29,33 @@ namespace Ecommerce.Application.Logic.Orders.Commands
 
         public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderByIdResponse>
         {
-            private readonly IEcommerceDbContext _ecommerceDbContext;
+            private readonly IUnitOfWork _unitOfWork;
             private readonly ICurrentUserService _currentUserService;
 
             public CreateOrderCommandHandler(
-                IEcommerceDbContext ecommerceDbContext,
+                IUnitOfWork unitOfWork,
                 ICurrentUserService currentUserService
                 )
             {
-                _ecommerceDbContext = ecommerceDbContext;
+                _unitOfWork = unitOfWork;
                 _currentUserService = currentUserService;
             }
 
             public async Task<OrderByIdResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
             {
-                var products = (await _ecommerceDbContext.Products
-                    .Where(x => request.Request.OrderItems.Select(x => x.ProductId).Contains(x.Id))
-                    .ToListAsync())
+                var products = (await _unitOfWork.Repository<Product>().ListAsync(new ProductSpecification(request.Request.OrderItems.Select(x => x.ProductId).ToList())))
                     .Select(product => (product, request.Request.OrderItems.Where(y => y.ProductId == product.Id).Select(x => x.Quantity).First()));
 
                 var order = new Order(DateTimeOffset.UtcNow, _currentUserService.UserGuid);
 
                 order.AddOrderItems(products);
 
-                await _ecommerceDbContext.Orders.AddAsync(order);
+                await _unitOfWork.Repository<Order>().Add(order);
+                await _unitOfWork.Complete();
 
-                await _ecommerceDbContext.SaveChangesAsync();
+                var insertedOrder = await _unitOfWork.Repository<Order>().GetEntityWithSpec(new OrderSpecification(order.Id));
 
-                var insertedOrder = await _ecommerceDbContext.Orders
-                        .Include(x => x.OrderItems)
-                            .ThenInclude(x => x.Product)
-                        .Include(x => x.Customer)
-                        .FirstAsync(x => x.Id == order.Id);
-
-                return insertedOrder.ToOrderByIdResponse();
+                return insertedOrder!.ToOrderByIdResponse();
             }
         }
     }

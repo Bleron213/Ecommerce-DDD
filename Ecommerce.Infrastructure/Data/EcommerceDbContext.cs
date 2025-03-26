@@ -1,10 +1,12 @@
 ﻿using Ecommerce.Application.Abstractions.Infrastructure;
+using Ecommerce.Domain.Common;
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Entities.Orders;
 using Ecommerce.Infrastructure.Data.ModelBuilderExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;

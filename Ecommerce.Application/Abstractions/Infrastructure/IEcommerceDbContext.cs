@@ -1,10 +1,12 @@
-﻿using Ecommerce.Domain.Entities;
+﻿using Ecommerce.Domain.Common;
+using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Entities.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,5 +24,6 @@ namespace Ecommerce.Application.Abstractions.Infrastructure
         EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
         ChangeTracker ChangeTracker { get; }
         DatabaseFacade Database { get; }
+        DbSet<TEntity> Set<TEntity>() where TEntity : class;
     }
 }
